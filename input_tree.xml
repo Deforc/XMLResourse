@@ -1,0 +1,11 @@
+<Head> value="ROOT"
+    <Child> value = "2"
+        <Child> value = "3"
+            <Child> value = "4"</Child>
+        </Child>
+    </Child>
+    <Child>value = "5"
+    </Child>
+    <Child>value = "6"
+    </Child>
+</Head>
