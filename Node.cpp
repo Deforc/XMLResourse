@@ -21,5 +21,9 @@ void Node::for_each(std::function<void(std::weak_ptr<Node>)> callback) {
     }
 }
 
+void Node::deleteNodeFromChildren(const std::weak_ptr<Node> &deletingNode) {
+    children.erase(std::find(children.begin(), children.end(), deletingNode.lock()));
+}
+
 
 

@@ -7,4 +7,7 @@ add_executable(XMLResourse main.cpp
         Tree.cpp
         Tree.h
         Node.cpp
-        Node.h)
+        Node.h
+        XMLResourse.cpp
+        XMLResourse.h
+)

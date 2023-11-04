@@ -53,7 +53,7 @@ void Tree::load(const std::string &filename) {
         }
     }
 
-    treeIter.updateList(this);
+    treeIterList.updateList(this);
 
     if(!tagStack.empty())
         throw std::runtime_error("The tree is not specified correctly!");
@@ -111,14 +111,73 @@ void Tree::for_each(std::function<void (std::weak_ptr<Node>)> callback) {
     root->for_each(callback);
 }
 
-void Tree::Iterator::updateList(Tree* tree) {
+std::list<std::weak_ptr<Node>>::iterator Tree::findByName(std::string name) {
+    return std::find_if(treeIterList.begin(), treeIterList.end(),
+                        [&](const std::weak_ptr<Node>& ptr)
+                        {return ptr.lock()->getName() == name;});
+}
+
+std::list<std::weak_ptr<Node>>::iterator Tree::findByValue(std::string value) {
+    return std::find_if(treeIterList.begin(), treeIterList.end(),
+                        [&](const std::weak_ptr<Node>& ptr)
+                        { return ptr.lock()->getValue() == value; });
+}
+
+std::list<std::weak_ptr<Node>>::iterator Tree::add(std::string name, std::string value, std::list<std::weak_ptr<Node>>::iterator addIter) {
+    auto newNode = std::make_shared<Node>(name, value);
+    if(std::shared_ptr<Node> addToNode = addIter->lock())
+    {
+        addToNode->addChild(newNode);
+        return treeIterList.addNewElemInIterList(addIter, newNode);
+    } else {
+        throw std::runtime_error("Failed to add this element");
+    }
+
+}
+
+bool Tree::erase(std::list<std::weak_ptr<Node>>::iterator delIter) {
+    if (delIter == treeIterList.begin()) {
+        return false;
+    }
+    std::weak_ptr<Node> parent;
+    for(const auto& nodeInList : treeIterList)
+    {
+        if(std::shared_ptr<Node> curNodeInList = nodeInList.lock()) {
+            for(const auto& child : curNodeInList->getChildren())
+                if(delIter->lock() == child.lock())
+                {
+                    parent = curNodeInList;
+                    goto next;
+                }
+        }
+    }
+
+    next:
+    if(std::shared_ptr<Node> deletingNode = delIter->lock())
+    {
+        for(const auto& delIterChild : deletingNode->getChildren())
+        {
+            if(std::shared_ptr<Node> delIterParent = parent.lock())
+                delIterParent->addChild(delIterChild.lock());
+        }
+        //----Почистить детей удаляемого node----
+        //---------------------------------------
+        treeIterList.eraseElemFromIterList(delIter);
+        if(std::shared_ptr<Node> delIterParent = parent.lock())
+            delIterParent->deleteNodeFromChildren(delIter->lock());
+    } else return false;
+
+    return  true;
+}
+
+void Tree::IteratorManager::updateList(Tree* tree) {
     tree->for_each([&](std::weak_ptr<Node> node) ->void { iteratorList.push_back(node); } );
 }
 
-void Tree::Iterator::addNewElemInIterList(std::list<std::weak_ptr<Node>>::iterator iterator, const std::weak_ptr<Node>& newNode) {
-    iteratorList.insert(inListFinder(iterator), newNode);
+std::list<std::weak_ptr<Node>>::iterator Tree::IteratorManager::addNewElemInIterList(std::list<std::weak_ptr<Node>>::iterator iterator, const std::weak_ptr<Node>& newNode) {
+   return iteratorList.insert(inListFinder(iterator), newNode);
 }
 
-void Tree::Iterator::eraseElemFromIterList(std::list<std::weak_ptr<Node>>::iterator iterator) {
+void Tree::IteratorManager::eraseElemFromIterList(std::list<std::weak_ptr<Node>>::iterator iterator) {
     iteratorList.erase(inListFinder(iterator));
 }
