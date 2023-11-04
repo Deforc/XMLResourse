@@ -1,22 +1,25 @@
 #include "Node.h"
 
-void Node::addChild(std::unique_ptr<Node> child) {
+void Node::addChild(std::shared_ptr<Node> child) {
     children.push_back(std::move(child));
 }
 
-std::vector<Node *> Node::getChildren() {
-    std::vector<Node*> returnedChildren ;
+std::vector<std::weak_ptr<Node>> Node::getChildren() {
+    std::vector<std::weak_ptr<Node>> returnedChildren;
     returnedChildren.reserve(children.size());
     for (const auto & i : children)
     {
-        returnedChildren.push_back(i.get());
+        returnedChildren.push_back(i);
     }
     return returnedChildren;
 }
 
-Node *Node::getLastChild() {
-    if(!children.empty())
-        return children.back().get();
-    else
-        return nullptr;
+void Node::for_each(std::function<void(std::weak_ptr<Node>)> callback) {
+    for (const auto& child : children) {
+        callback(child);
+        child->for_each(callback);
+    }
 }
+
+
+
