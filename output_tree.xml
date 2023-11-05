@@ -1,9 +1,8 @@
-<Head> value = "ROOT" 
-    <Child> value = "2" 
-        <Child> value = "3" 
-            <Child> value = "4" </Child>
-        </Child>
-    </Child>
-    <Child> value = "5" </Child>
-    <Child> value = "6" </Child>
-</Head>
+<Car> value = "LADA Priora" 
+    <Engine> value = "VAZ-21114" 
+        <FuelType> value = "Petrol" </FuelType>
+        <Volume> value = "1596 cm^3" </Volume>
+        <Configuration> value = "In-line, 4 cylinders" </Configuration>
+        <FuelConsumption> value = "5.7" </FuelConsumption>
+    </Engine>
+</Car>

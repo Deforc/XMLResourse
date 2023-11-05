@@ -7,6 +7,9 @@ void Tree::load(const std::string &filename) {
     if (!file.is_open()) {
         throw std::runtime_error("File not found");
     }
+    std::string strtest = filename.substr(filename.length()-4, 4);
+    if(filename.substr(filename.length()-4, 4) != ".xml")
+        throw std::runtime_error("Loaded file isn`t \".xml\" format");
 
     std::string line;
     std::stack<std::weak_ptr<Node>> tagStack;
@@ -61,13 +64,13 @@ void Tree::load(const std::string &filename) {
     file.close();
 }
 
-void Tree::save(const std::string &filename) {
+void Tree::save(const std::string &filename) const{
     std::ofstream file(filename);
     saveNode(file, root, 0);
     file.close();
 }
 
-void Tree::saveNode(std::ofstream &file, const std::weak_ptr<Node>& node, int indentLevel)  {
+void Tree::saveNode(std::ofstream &file, const std::weak_ptr<Node>& node, int indentLevel) const {
     std::string indent(indentLevel * 4, ' ');
     if (std::shared_ptr<Node> curNode = node.lock()) {
         file << indent << "<" << curNode->getName() << ">" << " value = \"" << curNode->getValue() << "\" ";
@@ -87,7 +90,7 @@ void Tree::saveNode(std::ofstream &file, const std::weak_ptr<Node>& node, int in
 }
 
 
-void Tree::print() {
+void Tree::print() const{
     std::stack<std::pair <int, std::weak_ptr<Node>>> nodes;
     nodes.emplace(0, root);
 

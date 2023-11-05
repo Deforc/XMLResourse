@@ -13,11 +13,11 @@ public:
     Node(std::string  name, std::string  value) : name(std::move(name)), value(std::move(value)) {}
 
     void addChild(std::shared_ptr<Node> child) ;
-    std::vector<std::weak_ptr<Node>> getChildren () ;
-    std::string getName() { return  name; }
-    std::string getValue() { return value; }
+    std::vector<std::weak_ptr<Node>> getChildren () const;
+    std::string getName() const { return  name; }
+    std::string getValue() const { return value; }
     void deleteNodeFromChildren(const std::weak_ptr<Node>& deletingNode);
-    void for_each(std::function<void (std::weak_ptr<Node>)> callback);
+    void for_each(const std::function<void (std::weak_ptr<Node>)>& callback);
 
 
 private:
