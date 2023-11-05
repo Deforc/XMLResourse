@@ -1,0 +1,9 @@
+<Car> value="LADA Priora"
+    <Engine> value="VAZ-21114"
+        <FuelType> value="Petrol" </FuelType>
+        <Volume> value="1596 cm^3" </Volume>
+        <Configuration> value="In-line, 4 cylinders" </Configuration>
+        <ValvesNumber> value="8" </ValvesNumber>
+    </Engine>
+</Car>
+
